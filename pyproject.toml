@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "dns-kube-job"
+version = "0.1.0"
+description = "Kubernetes job container to create records and zones in Technitium DNS"
+authors = ["Aaron Steed <asteed7@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.31.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
