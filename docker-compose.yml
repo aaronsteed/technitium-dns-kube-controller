@@ -1,0 +1,10 @@
+version: "2.1"
+services:
+  dns-server:
+    image: technitium/dns-server:11.1.1
+    container_name: dns-server
+    volumes:
+      - ./.docker/dns/config:/etc/dns
+    ports:
+      - 5380:5380
+    restart: unless-stopped
