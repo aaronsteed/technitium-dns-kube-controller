@@ -29,6 +29,16 @@ def endpoint_is_accessible(dns_endpoint) -> bool:
         return False
 
 
+def ensure_no_previous_record(zone_name, dns_endpoint, record_name, generated_token):
+    """ensure that the record name does not currently exist in Technitium DNS server
+       will cause issues where multiple IPs will be returned if duplicate entries for a record name present
+       Only nice way to do this is deleting and recreating zone
+    """
+    response = requests.get(f"{dns_endpoint}/api/zones/delete?token={generated_token}&zone={zone_name}")
+    print("evaluated : " + f"{dns_endpoint}/api/zones/delete?token={generated_token}&zone={zone_name}")
+    print(response.content)
+
+
 def main():
     dns_endpoint = os.getenv("DNS_ENDPOINT")  # e.g. http://localhost:56196
 
@@ -41,6 +51,8 @@ def main():
         record_value = os.getenv("RECORD_VALUE")  # dns entry to add for record e.g. 192.168.1.10
 
         generated_token = generate_token(dns_endpoint, username, password, token_name)
+
+        ensure_no_previous_record(zone_name, dns_endpoint, record_name, generated_token)
 
         if not zone_already_exists(dns_endpoint, generated_token, zone_name):
             requests.get(f"{dns_endpoint}/api/zones/create?token={generated_token}&zone={zone_name}")

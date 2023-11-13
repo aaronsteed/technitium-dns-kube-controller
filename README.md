@@ -21,5 +21,5 @@ docker build -t ghcr.io/aaronsteed/dns-kube-job:latest .
 Note: Consider using a secret in Kubernetes for `password`
 ## Running project locally
 ```shell
-python -m dns-kube-
+python -m dns-kube-job.main
 ```
