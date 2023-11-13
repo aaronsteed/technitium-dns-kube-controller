@@ -8,6 +8,11 @@ ARG ZONE
 ARG RECORD_NAME
 ARG RECORD_VALUE
 
+# Specification of OCI labels here: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#labelling-container-images
+LABEL authors="aaronsteed"
+LABEL org.opencontainers.image.source="https://github.com/aaronsteed/dns-kube-job/"
+LABEL org.opencontainers.image.description="App to create a DNS record in Technitium DNS from environment variables"
+
 
 RUN pip install poetry
 COPY . /app
