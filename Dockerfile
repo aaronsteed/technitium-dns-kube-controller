@@ -20,5 +20,5 @@ COPY . /app
 WORKDIR /app
 RUN poetry install
 
-ENTRYPOINT ["poetry", "run", "python", "-m", "dns-kube-job.main"]
+ENTRYPOINT ["kopf", "run", "technitium-dns-kube-controller.new-main"]
 

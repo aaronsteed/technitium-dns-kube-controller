@@ -1,25 +1,11 @@
-# DNS Kube Job
-> Operator to create DNS record and zone in Technitium DNS running in Kubernetes
+# Technitium DNS Controller
+> Operator to create DNS record and zone in Technitium DNS running in Kubernetes via config maps objects
 
-## Building Docker image
-```shell
-docker build -t ghcr.io/aaronsteed/dns-kube-job:latest .
-```
+# Prerequisites
+- Minikube
+- Docker
 
-
-## Environment Variables (Must be set!)
-| Environment Variable | Example Value         |
-|----------------------|-----------------------|
-| DNS_ENDPOINT         | http://localhost:5380 |
-| TOKEN_NAME           | token                 |
-| USERNAME             | admin                 |
-| PASSWORD             | admin                 |
-| ZONE                 | example.com           |
-| RECORD_NAME          | *                     |
-| RECORD_VALUE         | 192.168.1.254         |
-
-Note: Consider using a secret in Kubernetes for `password`
-## Running project locally
-```shell
-python -m dns-kube-job.main
+## Development
+```bash
+minikube start --driver=docker
 ```

@@ -1,13 +1,16 @@
 [tool.poetry]
-name = "dns-kube-job"
+name = "technitium-dns-kube-controller"
 version = "0.1.0"
-description = "Kubernetes job container to create records and zones in Technitium DNS"
+description = "Kubernetes controller to create zones and records in Technitium DNS"
 authors = ["Aaron Steed <asteed7@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.31.0"
+kopf = "^1.37.2"
+loguru = "^0.7.2"
+cerberus = "^1.3.5"
 
 
 [build-system]
