@@ -1,5 +1,22 @@
+import kopf
+from loguru import logger
+import asyncio
+from cerberus import Validator
 import os
 import requests
+
+# Technitium API Docs: https://github.com/TechnitiumSoftware/DnsServer/blob/master/APIDOCS.md
+
+DEFAULT_USERNAME = os.getenv('USERNAME', 'admin')
+DEFAULT_PASSWORD = os.getenv('USERNAME', 'admin')
+TOKEN = ""
+DEFAULT_ANNOTATION_KEY = "technitium-dns-entry/v1"
+
+schema = {"record_name": {"type": "string"},
+          "record_value": {"type": "string"},
+          "zone": {"type": "string"}}
+
+DNS_ENDPOINT = os.getenv("DNS_ENDPOINT", "http://127.0.0.1:5380")  # e.g. http://localhost:56196
 
 
 def zone_already_exists(dns_endpoint, generated_token, zone_name) -> bool:
@@ -12,6 +29,66 @@ def zone_already_exists(dns_endpoint, generated_token, zone_name) -> bool:
             return True
 
     return False
+
+
+def is_valid_dns_entry_config_map(name, config_map):
+    validator = Validator(schema)
+    if not validator.validate(config_map):
+        logger.error(f"Error validating DNS entry config map {name} with schema errors {validator.errors}")
+        logger.error("Schema validation error for ")
+        return False
+    return True
+
+
+def create_record_fn(**kwargs):
+    dns_endpoint = kwargs['dns_endpoint']
+    token = kwargs['token']
+    zone = kwargs['zone']
+    url = f"{dns_endpoint}/api/zones/records/add?token={token}&domain={kwargs['record_name']}.{zone}&zone={zone}&type=A&ipAddress={kwargs['record_value']}"
+    logger.debug(f"Creating DNS entry at {url}")
+    if not zone_already_exists(dns_endpoint, token, zone):
+        requests.get(f"{DNS_ENDPOINT}/api/zones/create?token={token}&zone={zone}")
+    requests.get(url)
+
+
+def update_record_fn(**kwargs):
+    logger.info(f"The old data {kwargs['old']}")
+    old_record_value = kwargs['old']['data']['record_value']
+    requests.get(
+        f"{kwargs['dns_endpoint']}/api/zones/records/update?token={kwargs['token']}&domain={kwargs['record_name']}.{kwargs['zone']}&zone={kwargs['zone']}&type=A&value={old_record_value}&newValue={kwargs['record_value']}&ptr=false")
+
+
+def delete_record_fn(**kwargs):
+    url = f"{kwargs['dns_endpoint']}/api/zones/records/delete?token={kwargs['token']}&domain={kwargs['record_name']}.{kwargs['zone']}&zone={kwargs['zone']}&type=A&ipAddress={kwargs['record_value']}"
+    logger.debug(f"Deleting record at {url}")
+    requests.get(url)
+
+
+def base_resource_fn(resource_fn, **kwargs):
+    body = kwargs.get("body")
+    old = kwargs.get("old", None)
+    if body['metadata']['annotations'].get(DEFAULT_ANNOTATION_KEY, None):
+        # validate schema
+        if is_valid_dns_entry_config_map(body['metadata']['name'], body['data']):
+            entry = body['data']
+            return resource_fn(dns_endpoint=DNS_ENDPOINT, token=TOKEN, zone=entry['zone'], record_name=entry['record_name'], record_value=entry['record_value'], old=old)
+        else:
+            logger.info(f"no action taken for resource {body['metadata']['name']}")
+
+
+@kopf.on.create('ConfigMap')
+def create_fn(body, **_):
+    base_resource_fn(create_record_fn, body=body)
+
+
+@kopf.on.update('ConfigMap')
+def update_fn(body, old, **_):
+    base_resource_fn(update_record_fn, body=body, old=old)
+
+
+@kopf.on.delete('ConfigMap')
+def delete_fn(body, **_):
+    base_resource_fn(delete_record_fn, body=body)
 
 
 def generate_token(dns_endpoint, username, password, token_name) -> str:
@@ -66,3 +143,10 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+@kopf.on.startup()
+def configure(settings: kopf.OperatorSettings, **_):
+    global TOKEN
+    logger.info("Started Technitium DNS Kube Controller")
+    TOKEN = generate_token(DNS_ENDPOINT, DEFAULT_USERNAME, DEFAULT_PASSWORD,
+                           "technitium-dns-kube-controller")
