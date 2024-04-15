@@ -1,0 +1,26 @@
+{{ range .Values.storage }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+    name: {{ .pv.name }}
+    labels:
+      storageType: "hdd"
+      volumeType: "nfs"
+      applicationServed: {{ .pv.applicationServed }}
+      storageType: {{ .pv.storageType }}
+spec:
+  capacity:
+    storage: {{ .pv.capacity }}
+  volumeMode: Filesystem
+  accessModes:
+    - {{ .pv.accessMode }}
+  persistentVolumeReclaimPolicy: {{ .pv.reclaimPolicy }}
+  storageClassName: {{ .pv.storageClassName }}
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:
+    path: {{ .pv.nfsPath }}
+    server: {{ .pv.server }}
+{{ end }}
