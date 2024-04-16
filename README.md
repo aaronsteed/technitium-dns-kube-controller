@@ -4,7 +4,6 @@
 ![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)&nbsp;&nbsp;
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 [![Create and publish Docker image to ghcr.io](https://github.com/aaronsteed/technitium-dns-kube-controller/actions/workflows/deploy-to-ghcr.yml/badge.svg)](https://github.com/aaronsteed/technitium-dns-kube-controller/actions/workflows/deploy-to-ghcr.yml)
-
 </div>
 
 > Kubernetes controller to manage DNS records and zones in Technitium DNS running in Kubernetes via native Kubernetes ConfigMap resources
