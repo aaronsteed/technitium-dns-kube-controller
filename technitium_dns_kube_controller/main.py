@@ -45,17 +45,17 @@ def create_record_fn(**kwargs):
     token = kwargs['token']
     zone = kwargs['zone']
     url = f"{dns_endpoint}/api/zones/records/add?token={token}&domain={kwargs['record_name']}.{zone}&zone={zone}&type=A&ipAddress={kwargs['record_value']}"
-    logger.debug(f"Creating DNS entry at {url}")
+    logger.info(f"Creating DNS entry at {url}")
     if not zone_already_exists(dns_endpoint, token, zone):
         requests.get(f"{DNS_ENDPOINT}/api/zones/create?token={token}&zone={zone}")
     requests.get(url)
 
 
 def update_record_fn(**kwargs):
-    logger.info(f"The old data {kwargs['old']}")
     old_record_value = kwargs['old']['data']['record_value']
-    requests.get(
-        f"{kwargs['dns_endpoint']}/api/zones/records/update?token={kwargs['token']}&domain={kwargs['record_name']}.{kwargs['zone']}&zone={kwargs['zone']}&type=A&value={old_record_value}&newValue={kwargs['record_value']}&ptr=false")
+    url = f"{kwargs['dns_endpoint']}/api/zones/records/update?token={kwargs['token']}&domain={kwargs['record_name']}.{kwargs['zone']}&zone={kwargs['zone']}&type=A&value={old_record_value}&newValue={kwargs['record_value']}&ptr=false"
+    logger.info(f"Updating DNS entry at {url}")
+    requests.get(url)
 
 
 def delete_record_fn(**kwargs):
@@ -71,22 +71,23 @@ def base_resource_fn(resource_fn, **kwargs):
         # validate schema
         if is_valid_dns_entry_config_map(body['metadata']['name'], body['data']):
             entry = body['data']
-            return resource_fn(dns_endpoint=DNS_ENDPOINT, token=TOKEN, zone=entry['zone'], record_name=entry['record_name'], record_value=entry['record_value'], old=old)
+            return resource_fn(dns_endpoint=DNS_ENDPOINT, token=TOKEN, zone=entry['zone'],
+                               record_name=entry['record_name'], record_value=entry['record_value'], old=old)
         else:
             logger.info(f"no action taken for resource {body['metadata']['name']}")
 
 
-@kopf.on.create('ConfigMap')
+@kopf.on.create('', 'v1', 'ConfigMap')
 def create_fn(body, **_):
     base_resource_fn(create_record_fn, body=body)
 
 
-@kopf.on.update('ConfigMap')
+@kopf.on.update('', 'v1', 'ConfigMap')
 def update_fn(body, old, **_):
     base_resource_fn(update_record_fn, body=body, old=old)
 
 
-@kopf.on.delete('ConfigMap')
+@kopf.on.delete('', 'v1', 'ConfigMap')
 def delete_fn(body, **_):
     base_resource_fn(delete_record_fn, body=body)
 
@@ -148,5 +149,6 @@ if __name__ == '__main__':
 def configure(settings: kopf.OperatorSettings, **_):
     global TOKEN
     logger.info("Started Technitium DNS Kube Controller")
+    logger.info(f"the settings {settings}")
     TOKEN = generate_token(DNS_ENDPOINT, DEFAULT_USERNAME, DEFAULT_PASSWORD,
                            "technitium-dns-kube-controller")

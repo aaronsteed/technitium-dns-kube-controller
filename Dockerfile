@@ -4,12 +4,12 @@ ENV DNS_ENDPOINT http://localhost:5380
 ENV USERNAME admin
 ENV PASSWORD admin
 ENV NAMESPACE default
+ENV EXTRA_ARGS ""
 
 RUN pip install poetry
 COPY . /app
 
 WORKDIR /app
-RUN poetry install
+RUN poetry install --no-dev
 
-ENTRYPOINT ["kopf", "run", "-m", "technitium_dns_kube_controller", "--namespace=$NAMESPACE"]
-
+ENTRYPOINT poetry run kopf run /app/technitium_dns_kube_controller/main.py -n $NAMESPACE $EXTRA_ARGS

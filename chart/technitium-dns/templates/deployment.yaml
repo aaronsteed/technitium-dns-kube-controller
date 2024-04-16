@@ -5,9 +5,9 @@ metadata:
   labels:
     {{- include "technitium-dns.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "technitium-dns.selectorLabels" . | nindent 6 }}
@@ -29,11 +29,16 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      serviceAccountName: kopfexample-account
       containers:
         - name: technitium-dns-kube-controller
-          serviceAccountName: kopfexample-account
           image: "{{ .Values.controllerImage.repository }}:{{ .Values.controllerImage.tag }}"
           imagePullPolicy: {{ .Values.controllerImage.pullPolicy }}
+          env:
+            - name: NAMESPACE
+              value: "{{ .Values.controller.namespace }}"
+            - name: EXTRA_ARGS
+              value: "{{ .Values.controller.extra_args | default "" }}"
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
