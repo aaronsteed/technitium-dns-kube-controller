@@ -85,3 +85,4 @@ Note: Ensure the annotation `technitium-dns-entry/v1` is set for this `ConfigMap
 - [ ] Prometheus metrics endpoint to expose metrics from Technitium DNS
 - [ ] Health check endpoint (will include health of access to Technitium instance)
 - [ ] More formal documentation site
+- [ ] Real tests ? 😅
