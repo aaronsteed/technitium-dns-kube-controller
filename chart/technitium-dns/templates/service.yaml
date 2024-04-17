@@ -1,0 +1,18 @@
+{{ range .Values.services }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "technitium-dns.fullname" $ }}-{{ .name }}
+  labels:
+    {{- include "technitium-dns.labels" $ | nindent 4 }}
+spec:
+  type: {{ .type }}
+  ports:
+    - port: {{ .port }}
+      targetPort: {{ .targetPort }}
+      protocol: {{ .protocol }}
+      name: {{ .name }}
+  selector:
+    {{- include "technitium-dns.selectorLabels" $ | nindent 4 }}
+{{ end }}
