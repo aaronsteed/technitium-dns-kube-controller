@@ -1,4 +1,4 @@
-# Technitium DNS Controller
+# Technitium DNS Kube Controller
 <div style="display: flex; justify-content: center">
 
 ![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)&nbsp;&nbsp;
