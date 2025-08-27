@@ -1,8 +1,11 @@
 # Technitium DNS Kube Controller
 <div style="display: flex; justify-content: center">
 
-![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)&nbsp;&nbsp;
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+<img width="99" src="https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white"></img>
+<img width="75" src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54"></img>
+<img width="63" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json"></img>
+<br />
+<br />
 [![Create and publish Docker image to ghcr.io](https://github.com/aaronsteed/technitium-dns-kube-controller/actions/workflows/deploy-to-ghcr.yml/badge.svg)](https://github.com/aaronsteed/technitium-dns-kube-controller/actions/workflows/deploy-to-ghcr.yml)
 </div>
 
@@ -40,7 +43,7 @@ docker-compose up
 Will spin up a local instance of Technitium DNS allowing you to create, update and delete records and zones on this instance
 
 ```bash
-kopf -m technitium_dns_kube_controller
+kopf run technitium_dns_kube_controller/main.py  
 ```
 Runs the operator, `kopf` automatically connects and authenticates with the `minikube` instance. 
 
