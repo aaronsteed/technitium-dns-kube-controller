@@ -1,5 +1,6 @@
 import kopf
 from loguru import logger
+import asyncio
 from cerberus import Validator
 import os
 import requests
