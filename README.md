@@ -10,6 +10,10 @@
 </div>
 
 > Kubernetes controller to manage DNS records and zones in Technitium DNS running in Kubernetes via native Kubernetes ConfigMap resources
+# Intended Usage and Project Motivation
+I use this in my home lab to auto configure domains as Kubernetes resources (Annotated ConfigMaps) either as part of 
+helm chart deployments of services and/or part of ArgoCD applications and the Kubernetes resources they manage 
+
 <!-- TOC -->
 * [Technitium DNS Controller](#technitium-dns-controller)
 * [Prerequisites](#prerequisites)
