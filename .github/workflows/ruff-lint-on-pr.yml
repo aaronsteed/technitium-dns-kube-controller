@@ -6,12 +6,6 @@ on:
       - '**.py'
       - 'pyproject.toml'
       - '.github/workflows/ruff-lint-on-pr.yml'
-  push:
-    branches: [main]
-    paths:
-      - '**.py'
-      - 'pyproject.toml'
-      - '.github/workflows/ruff-lint-on-pr.yml'
 
 jobs:
   lint:
