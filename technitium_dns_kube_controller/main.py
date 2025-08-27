@@ -77,6 +77,7 @@ def base_resource_fn(resource_fn, **kwargs):
             logger.info(f"no action taken for resource {body['metadata']['name']}")
 
 
+@kopf.on.resume('', 'v1', 'ConfigMap')
 @kopf.on.create('', 'v1', 'ConfigMap')
 def create_fn(body, **_):
     base_resource_fn(create_record_fn, body=body)
