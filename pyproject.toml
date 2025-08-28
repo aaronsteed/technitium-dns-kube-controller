@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "technitium-dns-kube-controller"
-version = "1.0.1"
+version = "1.0.2"
 description = "Kubernetes controller to create zones and records in Technitium DNS"
 authors = ["Aaron Steed <asteed7@gmail.com>"]
 readme = "README.md"

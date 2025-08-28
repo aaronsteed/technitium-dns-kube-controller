@@ -10,6 +10,7 @@ DEFAULT_USERNAME = os.getenv('USERNAME', 'admin')
 DEFAULT_PASSWORD = os.getenv('USERNAME', 'admin')
 TOKEN = ""
 DEFAULT_ANNOTATION_KEY = "technitium-dns-entry/v1"
+DEFAULT_ANNOTATION_VALUE = "true"
 
 schema = {"record_name": {"type": "string"},
           "record_value": {"type": "string"},
@@ -76,18 +77,22 @@ def base_resource_fn(resource_fn, **kwargs):
             logger.info(f"no action taken for resource {body['metadata']['name']}")
 
 
-@kopf.on.resume('', 'v1', 'ConfigMap')
-@kopf.on.create('', 'v1', 'ConfigMap')
+@kopf.on.resume('', 'v1', 'ConfigMap',
+                annotations={DEFAULT_ANNOTATION_KEY: DEFAULT_ANNOTATION_VALUE})
+@kopf.on.create('', 'v1', 'ConfigMap',
+                annotations={DEFAULT_ANNOTATION_KEY: DEFAULT_ANNOTATION_VALUE})
 def create_fn(body, **_):
     base_resource_fn(create_record_fn, body=body)
 
 
-@kopf.on.update('', 'v1', 'ConfigMap')
+@kopf.on.update('', 'v1', 'ConfigMap',
+                annotations={DEFAULT_ANNOTATION_KEY: DEFAULT_ANNOTATION_VALUE})
 def update_fn(body, old, **_):
     base_resource_fn(update_record_fn, body=body, old=old)
 
 
-@kopf.on.delete('', 'v1', 'ConfigMap')
+@kopf.on.delete('', 'v1', 'ConfigMap',
+                annotations={DEFAULT_ANNOTATION_KEY: DEFAULT_ANNOTATION_VALUE})
 def delete_fn(body, **_):
     base_resource_fn(delete_record_fn, body=body)
 
