@@ -86,7 +86,28 @@ data:
 ```
 Note: Ensure the annotation `technitium-dns-entry/v1` is set for this `ConfigMap` gets picked up by the controller
 
+## Publishing Docker Image 
+> From local
+```bash
+docker buildx ls # List all builders
+```
+either use or create a new builder
+```bash
+docker buildx create --name mybuilder --use
+```
+**OR**
+```bash
+docker buildx use mybuilder
+```
+### Build image
+```bash
+make build-multi-platform-image
+```
 
+### Publish Image
+```bash
+make push-multi-platform-image
+```
 # Roadmap of features/future improvements
 - [ ] Delete zone if no records exist for it 
 - [ ] Prometheus metrics endpoint to expose metrics from Technitium DNS

@@ -22,5 +22,5 @@ native-push: ##Push container to Github Container Registry 📍
 	docker push '$(REPOSITORY)/$(USERNAME)/$(APPLICATION_NAME):$(VERSION)'
 
 push-multi-platform-image:
-	docker login
+	docker login ghcr.io -u aaronsteed -p ${GITHUB_TOKEN}
 	docker buildx build --push --tag $(REPOSITORY)/$(USERNAME)/$(APPLICATION_NAME):$(VERSION) --platform=linux/arm64,linux/amd64 .
